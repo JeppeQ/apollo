@@ -142,6 +142,16 @@ class Apollo {
       return this.moveTo(fleet, zone, position)
     }
 
+    const ironEvents = freshPlanets.filter(f => f.reward_type === "Iron Ore" && f.reward_left > 75000 && !this.targetedPlanets.includes(f.id))
+    if (ironEvents.length > 0 && this.waitForMoreResources) {
+      const position = [ironEvents[0].q, ironEvents[0].r]
+      const zone = this.zones.find(zone => zone === ironEvents[0].zone_id)
+
+      console.log("Launching fleet towards Iron Ore", fleet.name)
+      this.targetedPlanets.push(ironEvents[0].id)
+      return this.moveTo(fleet, zone, position)
+    }
+
     this.noPiratePlanets = true
   }
 
