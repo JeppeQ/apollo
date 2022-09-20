@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 import { PirateFleets, AvailableStates } from './enums.js'
-import * as api from './queries.js'
+import API from './queries.js'
 
 function delay(time) {
   return new Promise(resolve => setTimeout(resolve, time));
@@ -20,14 +20,15 @@ class Apollo {
     this.structuresLastUpdated = null
 
     this.waitForMoreResources = false
+    this.api = new API()
   }
 
   async getCargo() {
-    this.cargo = await api.getStorage()
+    this.cargo = await this.api.getStorage()
   }
 
   async getFleets() {
-    const fleets = await api.getFleets()
+    const fleets = await this.api.getFleets()
 
     if (!fleets) { console.log('NO FLEETS ERROR') }
 
@@ -39,7 +40,7 @@ class Apollo {
   }
 
   async getZones() {
-    this.zones = await api.getZones()
+    this.zones = await this.api.getZones()
   }
 
   async getFreshPlanets() {
@@ -49,7 +50,7 @@ class Apollo {
 
     await Promise.all(
       this.zones.map(async zone => {
-        const events = await api.getEvents(zone)
+        const events = await this.api.getEvents(zone)
         planets = planets.concat(events.filter(event => event.spec.type === 'Pirate' && DateTime.fromISO(event.start_time) > DateTime.now().minus({ minutes: 10 })))
       })
     )
@@ -65,7 +66,7 @@ class Apollo {
 
     await Promise.all(
       this.zones.map(async zone => {
-        const events = await api.getStructureEvents(zone)
+        const events = await this.api.getStructureEvents(zone)
         structures = structures.concat(events)
       })
     )
@@ -112,7 +113,7 @@ class Apollo {
 
     const closestDock = this.getClosestDock(fleet.zone_id, position)
 
-    await api.moveFleets([fleet], [closestDock.q, closestDock.r])
+    await this.api.moveFleets([fleet], [closestDock.q, closestDock.r])
   }
 
   async searchPlanet(fleet) {
@@ -159,10 +160,10 @@ class Apollo {
     const closestDock = this.getClosestDock(zone, position)
 
     // DEPLOY FLEET AT DOCK
-    await api.launchFleets([fleet], closestDock.id)
+    await this.api.launchFleets([fleet], closestDock.id)
 
     // MOVE FLEET
-    await api.moveFleets([fleet], position)
+    await this.api.moveFleets([fleet], position)
   }
 
   async handlePirateFleets() {
@@ -187,8 +188,8 @@ class Apollo {
 
     if (fleet.state === 'Idle' && isDock) {
       console.log('Docking and unloading', fleet.name)
-      await api.dockFleet(fleet, currentDock.id)
-      await api.unloadFleet(fleet)
+      await this.api.dockFleet(fleet, currentDock.id)
+      await this.api.unloadFleet(fleet)
       this.waitForMoreResources = false
       return
     }
@@ -204,7 +205,7 @@ class Apollo {
       return this.nextPirateAction(fleets)
     }
 
-    const events = await api.getEvents(fleet.zone_id)
+    const events = await this.api.getEvents(fleet.zone_id)
     const pirateEvent = events.find(e => `(${e.q},${e.r})` === fleet.zone_pos)
     if (pirateEvent && pirateEvent.spec.type === 'Pirate') {
 
@@ -219,7 +220,7 @@ class Apollo {
       }
 
       console.log('PIRATE TIME!', fleet.name)
-      return api.fight(fleet, pirateEvent.id)
+      return this.api.fight(fleet, pirateEvent.id)
     }
 
     if (!isDock) {
@@ -252,8 +253,8 @@ class Apollo {
 
     if (fleet.state === 'Idle' && isDock) {
       console.log('Docking and unloading', fleet.name)
-      await api.dockFleet(fleet, currentDock.id)
-      await api.unloadFleet(fleet)
+      await this.api.dockFleet(fleet, currentDock.id)
+      await this.api.unloadFleet(fleet)
       this.waitForMoreResources = false
     }
 
@@ -272,7 +273,7 @@ class Apollo {
       }
 
       console.log('Trading/refining', fleet.name)
-      await api.stuctureInteract(fleet, structure.id)
+      await this.api.stuctureInteract(fleet, structure.id)
     }
 
     else if (fleet.state === 'Hangar') {
@@ -326,9 +327,9 @@ class Apollo {
     };
 
     console.log('LAUNCHING FLEET TO', fleet.name, structure)
-    await api.loadFleet(fleet, type)
-    await api.launchFleets([fleet], structure.dockId)
-    await api.moveFleets([fleet], structure.position)
+    await this.api.loadFleet(fleet, type)
+    await this.api.launchFleets([fleet], structure.dockId)
+    await this.api.moveFleets([fleet], structure.position)
   }
 
   getEndTimes() {
