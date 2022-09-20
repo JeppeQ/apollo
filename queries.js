@@ -10,7 +10,12 @@ function delay(time) {
   return new Promise(resolve => setTimeout(resolve, time));
 }
 
-export class API {
+const JWT_ERRORS = [
+  "Could not verify JWT: JWTExpired",
+  "Could not verify JWT: JWSError JWSInvalidSignature",
+  "Malformed Authorization header"
+]
+export default class API {
   constructor() {
     this.token = ''
     this.url = "https://ime-pro.hasura.app/v1/graphql"
@@ -68,8 +73,8 @@ export class API {
 
     const data = await response.json()
     
-    if (data.errors && data.errors.length > 0 && data.errors[0].message === "Could not verify JWT: JWTExpired") {
-      await getToken()
+    if (data.errors && data.errors.length > 0 && JWT_ERRORS.includes(data.errors[0].message)) {
+      await this.getToken()
       return this.query(request, url)
     }
 
