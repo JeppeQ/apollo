@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 const headers = {
   "accept": "*/*",
   "accept-language": "en-US,en;q=0.9,da;q=0.8",
-  "authorization": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJodHRwczovL2hhc3VyYS5pby9qd3QvY2xhaW1zIjp7ImFsbG93ZWRfcm9sZXMiOlsicGxheWVyIl0sImRlZmF1bHRfcm9sZSI6InBsYXllciJ9LCJzdWIiOiI4ZGMxYjIxYi0xNWVhLTRlY2YtYTA5Zi1iMmI1NjNjNWUxZTgiLCJpYXQiOjE2NjI3MjcxOTQsImV4cCI6MTY2MjgxMzU5NH0.OvTLGxK_gdTIeOYE9I-_L89_aeD3xdjAsMmk51YjnlImDkYunXb6KglikvQ3x3OFSspKyt4ejHb3PRnBEMqMCw",
+  "authorization": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJodHRwczovL2hhc3VyYS5pby9qd3QvY2xhaW1zIjp7ImFsbG93ZWRfcm9sZXMiOlsicGxheWVyIl0sImRlZmF1bHRfcm9sZSI6InBsYXllciJ9LCJzdWIiOiI4ZGMxYjIxYi0xNWVhLTRlY2YtYTA5Zi1iMmI1NjNjNWUxZTgiLCJpYXQiOjE2NjM1ODA0MTgsImV4cCI6MTY2MzY2NjgxOH0._MavCvT_5ts1yDuLHV4cyByncigH8XRGEKwb-XJl-PE_ehW_a5LjYscnibm8w3SMGzn3n8H5o5w54bXhZ6J3Ug",
   "content-type": "application/json",
   "sec-ch-ua": "\"Google Chrome\";v=\"105\", \"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"105\"",
   "sec-ch-ua-mobile": "?0",
